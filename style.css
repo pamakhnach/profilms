@@ -19,6 +19,10 @@ body {
     max-width: 1100px;
 }
 
+body.active {
+    overflow: hidden; 
+}
+
 .header__wrapper {
     margin-bottom: 6rem;
 }
@@ -128,8 +132,30 @@ body {
     top: 50%;
     padding: 5rem 10rem;
     display: flex;
-    display: none;
-    
+    display: none;  
+}
+
+.fixed__info.active{
+    border: 1rem solid #FE4D17;
+    background-color:#fff;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    padding: 5rem 10rem;
+    display: flex;
+    display: block; 
+}
+
+.modal__close {
+    height: 4rem;
+    cursor: pointer;
+    background-color: #fff;
+    border: 0.1rem solid #FE4D17;
+}
+
+.modal__close:hover {
+    background-color: #FE4D17;
 }
 
 .info {
@@ -161,23 +187,37 @@ p {
     margin-bottom: 4rem;
 }
 
-.btn__more {
-    font-size: 2rem;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    background-color: #fff;
-    border: 0.3rem solid #FE4D17;
-}
-
-.btn__more:hover {
-    background-color: #FE4D17;
-}
-
 .not__found {
     font-size: 3rem;
 }
 
 .erorr {
     display: flex;
+}
+
+.btn__left {
+    display: none;
+}
+
+.btn__right {
+    height: 4rem;
+    cursor: pointer;
+    background-color: #fff;
+    border: 0.1rem solid #FE4D17;
+}
+
+.btn__right:hover {
+    background-color: #FE4D17;
+}
+
+.btn__left.active:hover {
+    background-color: #FE4D17;
+}
+
+.btn__left.active {
+    display: block;
+    height: 4rem;
+    cursor: pointer;
+    background-color: #fff;
+    border: 0.1rem solid #FE4D17;
 }

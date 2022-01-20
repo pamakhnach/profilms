@@ -5,19 +5,32 @@ const filmsList = document.querySelector('.films_list');
 const filmInfo = document.querySelector('.film__info');
 const fixed = document.querySelector('.fixed__info');
 const body = document.querySelector('body');
-const btnMore = document.querySelector('.btn__more');
+const btnLeft = document.querySelector('.btn__left');
+const btnRight = document.querySelector('.btn__right');
 const title = document.querySelector('.header__title');
 const erorr = document.querySelector('.erorr');
 
-
 let pageCount = 1;
+
+pageCount === 1 ? btnLeft.classList.remove('active') : btnLeft.classList.add('active');
 
 createFilmlist();
 
-btnMore.addEventListener('click', () => {
+btnLeft.addEventListener('click', () => {
+    pageCount--
+    pageCount === 1 ? btnLeft.classList.remove('active') : btnLeft.classList.add('active');
+
+    filmsList.innerHTML = "";
+
+    createFilmlist()
+})
+
+
+btnRight.addEventListener('click', () => {
     pageCount++
 
     filmsList.innerHTML = "";
+    btnLeft.classList.add('active');
 
     createFilmlist();
 })
@@ -33,33 +46,29 @@ title.addEventListener('click', () => {
 
 function createFilmlist() {
 fetch(`https://api.themoviedb.org/3/discover/movie?page=${pageCount}&api_key=6c6f41519384715153841c341e2ac177`)
-    .then(function(resp) { return resp.json() })
+    .then((resp) =>  resp.json() )
     .then(function(data) {
 
        erorr.innerHTML = "";
-
-       validLength(data.results);
 
     function createFilm(filmData){
         const filmElement = document.createElement('li');
         filmElement.classList.add('film');
 
-        if (!filmData.poster_path) {
-            filmElement.innerHTML = `<img class="logo__film" src="image/5.jpg"><span class="title__film">${filmData.original_title}</span>`;
-        } else {
-            filmElement.innerHTML = `<img class="logo__film" src="https://image.tmdb.org/t/p/w500${filmData.poster_path}"><span class="title__film">${filmData.original_title}</span>`;
-        }
+        let poster = filmData.poster_path ? `https://image.tmdb.org/t/p/w500${filmData.poster_path}` : "image/5.jpg";
+
+        filmElement.innerHTML = `<img class="logo__film" src='${poster}'>
+                                <span class="title__film">${filmData.original_title}</span>`;
 
         filmsList.append(filmElement);
 
         filmElement.addEventListener('click', (e) => {
             fetch(`https://api.themoviedb.org/3/movie/${filmData.id}?api_key=6c6f41519384715153841c341e2ac177`)
-                .then(function(resp) { return resp.json() })
+                .then((resp) => resp.json() )
                 .then(function(data) {
-                console.log(data)
-
-                body.style = 'background: rgba(1, 2, 7, 0.596)'
-                fixed.style = 'display : block';
+                
+                body.classList.add('active');
+                fixed.classList.add('active');
 
                 fixed.innerHTML = `<img class="poster_path" src="https://image.tmdb.org/t/p/w500${data.poster_path}">
                                         <div class="info">
@@ -69,11 +78,14 @@ fetch(`https://api.themoviedb.org/3/discover/movie?page=${pageCount}&api_key=6c6
                                         <p class="genres">Genre: <span>${data.genres[0].name}</span></p>
                                         <p class="company">Production company: <span>${data.production_companies[0].name}</span></p>
                                         <p class="overview">Overview: <span>${data.overview}</span></p>
-                                        </div>`
-                    
-                window.addEventListener('click', () => {
-                    fixed.style = 'display : none';
-                    body.style = 'background: #fff'
+                                        <button class="modal__close">Close</button>
+                                        </div>`;
+                
+                const closeModal = document.querySelector('.modal__close');
+
+                closeModal.addEventListener('click', () => {
+                    body.classList.remove('active');
+                    fixed.classList.remove('active');
                 })
         })
                 .catch(function(){
@@ -91,41 +103,33 @@ fetch(`https://api.themoviedb.org/3/discover/movie?page=${pageCount}&api_key=6c6
 }
 
 searchButton.addEventListener('click', () => {
-        
+    if(searchInput.value) {
     filmsList.innerHTML = '';
 
     fetch(`https://api.themoviedb.org/3/search/movie?api_key=6c6f41519384715153841c341e2ac177&query=${searchInput.value}`)
-        .then(function(resp) { return resp.json() })
+        .then((resp) => resp.json() )
         .then(function(data) {
-
-            if(data.results.length === 0) {
-                erorr.innerHTML = "<h1 class='not__found'>Nothing found</h1>";
-            } else {
-                erorr.innerHTML = "";
-            }
-
-            btnMore.style = 'display : none';
+           
+            data.results.length === 0 ? erorr.innerHTML = "<h1 class='not__found'>Nothing found</h1>" : erorr.innerHTML = "";
 
             function createFilm(filmData){
                 const filmElement = document.createElement('li');
+
                 filmElement.classList.add('film');
+                
+                let poster = filmData.poster_path ? `https://image.tmdb.org/t/p/w500${filmData.poster_path}` : "image/5.jpg";
 
-                if (!filmData.poster_path) {
-                    filmElement.innerHTML = `<img class="logo__film" src="image/5.jpg"><span class="title__film">${filmData.original_title}</span>`;
-                } else {
-                    filmElement.innerHTML = `<img class="logo__film" src="https://image.tmdb.org/t/p/w500${filmData.poster_path}"><span class="title__film">${filmData.original_title}</span>`;
-                }
-
+                filmElement.innerHTML = `<img class="logo__film" src='${poster}'><span class="title__film">${filmData.original_title}</span>`;
+                
                 filmsList.append(filmElement);
         
                 filmElement.addEventListener('click', (e) => {
                     fetch(`https://api.themoviedb.org/3/movie/${filmData.id}?api_key=6c6f41519384715153841c341e2ac177`)
-                        .then(function(resp) { return resp.json() })
+                        .then((resp) => resp.json() )
                         .then(function(data) {
-                        console.log(data)
         
-                        body.style = 'background: rgba(1, 2, 7, 0.596)';
-                        fixed.style = 'display : block';
+                        body.classList.add('active');
+                        fixed.classList.add('active');
         
                         fixed.innerHTML = `<img class="poster_path" src="https://image.tmdb.org/t/p/w500${data.poster_path}">
                                                 <div class="info">
@@ -135,11 +139,14 @@ searchButton.addEventListener('click', () => {
                                                 <p class="genres">Genre: <span>${data.genres[0].name}</span></p>
                                                 <p class="company">Production company: <span>${data.production_companies[0].name}</span></p>
                                                 <p class="overview">Overview: <span>${data.overview}</span></p>
-                                                </div>`
+                                                <button class="modal__close">Close</button>
+                                                </div>`;
                             
-                        window.addEventListener('click', () => {
-                            fixed.style = 'display : none';
-                            body.style = 'background: #fff'
+                        const closeModal = document.querySelector('.modal__close');
+                
+                        closeModal.addEventListener('click', () => {
+                        body.classList.remove('active');
+                        fixed.classList.remove('active');
                         })
                 })
                         .catch(function(){
@@ -150,13 +157,11 @@ searchButton.addEventListener('click', () => {
 
             data.results.forEach(film => createFilm(film));
         })
+    } else {
+        filmsList.innerHTML = "";
+
+        createFilmlist()
+    }
 });
 
-    
-function validLength(arr) {
-    if (arr.length >= 20) {
-        btnMore.style = 'display : block';
-    } else {
-        btnMore.style = 'display : none';
-    }
-}
+
